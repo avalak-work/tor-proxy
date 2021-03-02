@@ -1,0 +1,6 @@
+## .gitignore
+## https://git-scm.com/docs/gitignore
+
+## Editors
+.idea/
+.vscode
