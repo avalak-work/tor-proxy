@@ -1,5 +1,9 @@
 # Tor Proxy
 
+[![workutils](https://img.shields.io/docker/pulls/workutils/tor-proxy.svg)](https://hub.docker.com/r/workutils/tor-proxy)
+
+---
+
 Docker based tor image
 
 ## Configuration
