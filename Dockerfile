@@ -3,12 +3,12 @@
 
 FROM alpine:3
 RUN set -eux; \
-  apk --no-cache add tor
+  apk --no-cache add -X http://dl-cdn.alpinelinux.org/alpine/edge/testing gosu \
+  && apk --no-cache add tor
 
-ENV TOR_CONFIG=/etc/tor/torrc
+ADD entrypoint.sh /opt/entrypoint.sh
+RUN set -eux; \
+  chmod +x /opt/entrypoint.sh
 
-ADD entrypoint.sh /src/entrypoint.sh
-#ADD torrc ${TOR_CONFIG}
-
-ENTRYPOINT ["/bin/sh", "-c", "/src/entrypoint.sh"]
-CMD ["-f", "${TOR_CONFIG}"]
+ENTRYPOINT [ "/opt/entrypoint.sh" ]
+CMD [  ]
