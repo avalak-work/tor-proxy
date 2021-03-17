@@ -11,4 +11,4 @@ RUN set -eux; \
   chmod +x /opt/entrypoint.sh
 
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
-CMD [  ]
+CMD [ "--hush" ]

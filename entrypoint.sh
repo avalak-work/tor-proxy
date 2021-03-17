@@ -27,6 +27,6 @@ EOF
 populate_torrc > "${TOR_CONFIG}"
 gosu tor /usr/bin/tor -f "${TOR_CONFIG}" --verify-config --hush && {
   echo "[OK] Config file valid"
-  cat "${TOR_CONFIG}"
+  #cat "${TOR_CONFIG}"
 }
 exec gosu tor /usr/bin/tor -f "${TOR_CONFIG}" "${@}"
