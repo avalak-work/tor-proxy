@@ -7,8 +7,11 @@ services:
   tor-proxy:
     build: .
     restart: "no"
-#    command: [ "--hush" ]
+    ports:
+      - "127.0.0.1:1080:1080"
+      - "127.0.0.1:8404:8404"
     environment:
       TOR_MAX_CIRCUIT_DIRTNESS: 600
       TOR_PORT_BASE: 9060
-      TOR_PORT_AMOUNT: 5
+      TOR_PORT_AMOUNT: 20
+      TOR_EXPOSE_PORT: 1
