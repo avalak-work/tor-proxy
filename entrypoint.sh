@@ -3,37 +3,37 @@ set -eu
 #set -x
 
 TOR_CONFIG=${TOR_CONFIG:-/etc/tor/torrc}
-_TOR_HOST=$([ "${TOR_EXPOSE_PORT:-0}" == "1" ] && echo "0.0.0.0" || echo "127.0.0.1")
+_TOR_HOST=$([ "${TOR_EXPOSE_PORT:-0}" = "1" ] && echo "0.0.0.0" || echo "127.0.0.1")
 HAPROXY_CONFIG=${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}
 
 
 populate_torrc () {
-  local max_circuit_dirtness=${TOR_MAX_CIRCUIT_DIRTNESS:-300}
-  local min_port=${TOR_PORT_BASE:-9060}
-  local amount=${TOR_PORT_AMOUNT:-20}
+  max_circuit_dirtness=${TOR_MAX_CIRCUIT_DIRTNESS:-300}
+  min_port=${TOR_PORT_BASE:-9060}
+  amount=${TOR_PORT_AMOUNT:-20}
 
   cat << EOF
 ## /etc/tor/torrc
 ## man:torrc
-## Generated at $(date --utc +%Y-%m-%dT%H:%M:%SZ)
+## Generated at $(date --utc -Iseconds)
 
 EOF
 
   echo "MaxCircuitDirtiness ${max_circuit_dirtness}"
-  for port in $(seq ${min_port} $(( ${min_port} + ${amount} - 1 ))); do
+  for port in $(seq "${min_port}" "$(( min_port + amount - 1 ))"); do
     echo "SOCKSPort ${_TOR_HOST}:${port}"
   done
 }
 
 
 populate_haproxy_cfg () {
-  local min_port=${TOR_PORT_BASE:-9060}
-  local amount=${TOR_PORT_AMOUNT:-20}
+  min_port=${TOR_PORT_BASE:-9060}
+  amount=${TOR_PORT_AMOUNT:-20}
 
   cat << EOF
 ## /etc/haproxy/haproxy.cfg
 ## man:haproxy
-## Generated at $(date --utc +%Y-%m-%dT%H:%M:%SZ)
+## Generated at $(date --utc -Iseconds)
 
 global
   user haproxy
@@ -57,12 +57,12 @@ backend backend_proxy_pool
   balance roundrobin
 EOF
 
-  for port in $(seq ${min_port} $(( ${min_port} + ${amount} - 1 ))); do
-    echo "  server $([ "${TOR_EXPOSE_PORT:-0}" == "1" ] || echo "_")tor_instance_${port} ${_TOR_HOST}:${port} check"
+  for port in $(seq "${min_port}" "$(( min_port + amount - 1 ))"); do
+    echo "  server $([ "${TOR_EXPOSE_PORT:-0}" = "1" ] || echo "_")tor_instance_${port} ${_TOR_HOST}:${port} check"
   done
 
 
-## Add stats with native Prometheus support (HAProxe 2.0.0+)
+## Add stats with native Prometheus support (HAProxy 2.0.0+)
 cat << EOF
 frontend stats
   bind *:8404
@@ -77,8 +77,8 @@ EOF
 
 
 populate_supervisord_config () {
-  local program_name=${1:?Program name REQUIRED}
-  local command_exec=${2:?Command REQUIRED}
+  program_name=${1:?Program name REQUIRED}
+  command_exec=${2:?Command REQUIRED}
   cat << EOF
 [program:${program_name}]
 command=${command_exec}
@@ -93,7 +93,7 @@ EOF
 
 ## Populate Supervisor services
 mkdir /etc/supervisor.d/
-populate_supervisord_config "haproxy" "/usr/sbin/haproxy -W -f "${HAPROXY_CONFIG}"" > /etc/supervisor.d/haproxy.ini
+populate_supervisord_config "haproxy" "/usr/sbin/haproxy -W -f \"${HAPROXY_CONFIG}\"" > /etc/supervisor.d/haproxy.ini
 populate_supervisord_config "tor" "/usr/bin/tor" > /etc/supervisor.d/tor.ini
 
 ## Populate & validate HAProxy config
@@ -112,5 +112,5 @@ gosu tor /usr/bin/tor -f "${TOR_CONFIG}" --verify-config --hush && {
 
 #exec gosu tor /usr/bin/tor -f "${TOR_CONFIG}" "${@}" &
 #exec /usr/sbin/haproxy -W -f "${HAPROXY_CONFIG}"
-PYTHONUNBUFFERED=1 exec /usr/bin/supervisord --nodaemon "${@}"
 
+PYTHONUNBUFFERED=1 exec /usr/bin/supervisord --nodaemon --configuration /etc/supervisord.conf "${@}"
