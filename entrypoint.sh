@@ -4,6 +4,7 @@ set -eu
 
 TOR_CONFIG=${TOR_CONFIG:-/etc/tor/torrc}
 _TOR_HOST=$([ "${TOR_EXPOSE_PORT:-0}" = "1" ] && echo "0.0.0.0" || echo "127.0.0.1")
+_TOR_HOSTNAME=${TOR_HOSTNAME:-$(hostname)}
 HAPROXY_CONFIG=${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}
 
 
@@ -57,9 +58,8 @@ backend backend_proxy_pool
   balance roundrobin
 EOF
 
-  hostname=$(hostname)
   for port in $(seq "${min_port}" "$(( min_port + amount - 1 ))"); do
-    echo "  server $([ "${TOR_EXPOSE_PORT:-0}" = "1" ] || echo "_")tor_${hostname}_${port} ${_TOR_HOST}:${port} check"
+    echo "  server $([ "${TOR_EXPOSE_PORT:-0}" = "1" ] || echo "_")tor_${_TOR_HOSTNAME}_${port} ${_TOR_HOST}:${port} check"
   done
 
 
