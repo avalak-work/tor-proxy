@@ -1,0 +1,28 @@
+## .github/workflows/shell-shellcheck.yml
+## https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
+---
+
+name: shell-shellcheck
+
+on:
+  push:
+    #branches:
+    #  - master
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  spellcheck:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          apt install -y spellcheck
+
+      - name: Spellcheck
+        run: |
+          spellcheck
