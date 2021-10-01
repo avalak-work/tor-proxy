@@ -25,4 +25,4 @@ jobs:
 
       - name: Spellcheck
         run: |
-          spellcheck
+          spellcheck *.sh
