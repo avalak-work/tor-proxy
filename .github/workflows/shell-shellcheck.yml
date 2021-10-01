@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt install -y spellcheck
+          sudo apt install -y spellcheck
 
       - name: Spellcheck
         run: |
