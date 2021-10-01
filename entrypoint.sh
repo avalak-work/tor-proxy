@@ -57,8 +57,9 @@ backend backend_proxy_pool
   balance roundrobin
 EOF
 
+  hostname=$(hostname)
   for port in $(seq "${min_port}" "$(( min_port + amount - 1 ))"); do
-    echo "  server $([ "${TOR_EXPOSE_PORT:-0}" = "1" ] || echo "_")tor_instance_${port} ${_TOR_HOST}:${port} check"
+    echo "  server $([ "${TOR_EXPOSE_PORT:-0}" = "1" ] || echo "_")tor_${hostname}_${port} ${_TOR_HOST}:${port} check"
   done
 
 
