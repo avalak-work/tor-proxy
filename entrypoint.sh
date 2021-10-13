@@ -93,7 +93,7 @@ EOF
 
 
 ## Populate Supervisor services
-mkdir /etc/supervisor.d/
+mkdir -p /etc/supervisor.d/
 populate_supervisord_config "haproxy" "/usr/sbin/haproxy -W -f \"${HAPROXY_CONFIG}\"" > /etc/supervisor.d/haproxy.ini
 populate_supervisord_config "tor" "/usr/bin/tor" > /etc/supervisor.d/tor.ini
 
