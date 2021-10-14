@@ -4,7 +4,13 @@
 
 name: docker-image
 
-on: [ push, pull_request ]
+on:
+  push:
+    paths:
+      - '.github/workflows/build-image.yml'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'entrypoint.sh'
 
 jobs:
   build:
