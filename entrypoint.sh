@@ -10,10 +10,21 @@ _TOR_HOSTNAME=${TOR_HOSTNAME:-$(hostname)}
 HAPROXY_CONFIG=${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}
 
 
+show_usage () {
+  cat << EOF
+Usage: ${0##*/}
+
+Description:
+
+This is docker container entry point.
+EOF
+}
+
+
 populate_torrc () {
-  max_circuit_dirtness=${TOR_MAX_CIRCUIT_DIRTNESS:-300}
-  min_port=${TOR_PORT_BASE:-9060}
-  amount=${TOR_PORT_AMOUNT:-20}
+  local max_circuit_dirtness=${TOR_MAX_CIRCUIT_DIRTNESS:-300}
+  local min_port=${TOR_PORT_BASE:-9060}
+  local amount=${TOR_PORT_AMOUNT:-20}
 
   cat << EOF
 ## /etc/tor/torrc
@@ -30,8 +41,8 @@ EOF
 
 
 populate_haproxy_cfg () {
-  min_port=${TOR_PORT_BASE:-9060}
-  amount=${TOR_PORT_AMOUNT:-20}
+  local min_port=${TOR_PORT_BASE:-9060}
+  local amount=${TOR_PORT_AMOUNT:-20}
 
   cat << EOF
 ## /etc/haproxy/haproxy.cfg
@@ -80,8 +91,8 @@ EOF
 
 
 populate_supervisord_config () {
-  program_name=${1:?Program name REQUIRED}
-  command_exec=${2:?Command REQUIRED}
+  local program_name=${1:?Program name REQUIRED}
+  local command_exec=${2:?Command REQUIRED}
   cat << EOF
 [program:${program_name}]
 command=${command_exec}
