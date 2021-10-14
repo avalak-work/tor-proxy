@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
-# shellcheck disable=SC3043
+# shellcheck disable=SC2039,SC3043
+# Docs: https://github.com/koalaman/shellcheck/wiki/SC${CODE}
+# SC2039 - In POSIX sh, something is undefined. (Deprecated; => SC3043)
+# SC3043 - In POSIX sh, local is undefined.
 
 set -eu
 #set -x
