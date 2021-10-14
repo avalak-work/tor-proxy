@@ -1,4 +1,4 @@
-## .github/workflows/shell-shellcheck.yml
+## .github/workflows/shellcheck.yml
 ## https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
 ---
 
@@ -6,13 +6,12 @@ name: shell-shellcheck
 
 on:
   push:
-    #branches:
-    #  - master
-    paths-ignore:
-      - '**.md'
+    paths:
+      - '.github/workflows/shellcheck.yml'
+      - '**.sh'
 
 jobs:
-  spellcheck:
+  shellcheck:
     timeout-minutes: 5
     runs-on: ubuntu-latest
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
+# shellcheck disable=SC3043
+
 set -eu
 #set -x
 

@@ -2,7 +2,7 @@
 
 [![workutils](https://img.shields.io/docker/pulls/workutils/tor-proxy.svg)](https://hub.docker.com/r/workutils/tor-proxy)
 [![docker-image](https://github.com/avalak-work/tor-proxy/actions/workflows/build-image.yml/badge.svg)](https://github.com/avalak-work/tor-proxy/actions/workflows/build-image.yml)
-[![shell-shellcheck](https://github.com/avalak-work/tor-proxy/actions/workflows/shell-shellcheck.yml/badge.svg)](https://github.com/avalak-work/tor-proxy/actions/workflows/shell-shellcheck.yml)
+[![shellcheck](https://github.com/avalak-work/tor-proxy/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/avalak-work/tor-proxy/actions/workflows/shellcheck.yml)
 
 ---
 
