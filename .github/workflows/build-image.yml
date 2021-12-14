@@ -28,6 +28,8 @@ jobs:
         with:
           images: |
             workutils/tor-proxy
+          flavor: |
+            latest=true
           tags: |
             type=ref,event=branch
 
