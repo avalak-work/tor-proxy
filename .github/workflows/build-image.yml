@@ -5,6 +5,7 @@
 name: docker-image
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - '.github/workflows/build-image.yml'
@@ -17,30 +18,29 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
 
-    env:
-      DOCKER_REGISTRY: "docker.pkg.github.com"
-      # CONTAINER_IMAGE: "docker.pkg.github.com/${{ github.repository }}/image"
-      CONTAINER_IMAGE: "${{ secrets.DOCKERHUB_USERNAME }}/tor-proxy"
-
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Login to Docker Hub
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            workutils/tor-proxy
+          tags: |
+            type=ref,event=branch
+
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Image
-        run: |
-          docker build --tag="${{ github.sha }}" .
-          docker image tag ${{ github.sha }} "${CONTAINER_IMAGE}:${GITHUB_REF##*/}"
-          docker push "${CONTAINER_IMAGE}:${GITHUB_REF##*/}"
-          docker image tag ${{ github.sha }} "${CONTAINER_IMAGE}:latest"
-          docker push "${CONTAINER_IMAGE}:latest"
-
-      - name: Mark image stable
-        if: github.ref == 'refs/heads/master'
-        run: |
-          docker image tag ${{ github.sha }} "${CONTAINER_IMAGE}:stable"
-          docker push "${CONTAINER_IMAGE}:stable"
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
