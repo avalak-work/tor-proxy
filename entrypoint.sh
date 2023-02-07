@@ -7,10 +7,10 @@
 set -eu
 #set -x
 
-TOR_CONFIG=${TOR_CONFIG:-/etc/tor/torrc}
-_TOR_HOST=$([ "${TOR_EXPOSE_PORT:-0}" = "1" ] && echo "0.0.0.0" || echo "127.0.0.1")
-_TOR_HOSTNAME=${TOR_HOSTNAME:-$(hostname)}
-HAPROXY_CONFIG=${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}
+TOR_CONFIG="${TOR_CONFIG:-/etc/tor/torrc}"
+_TOR_HOST="$([ "${TOR_EXPOSE_PORT:-0}" = "1" ] && echo "0.0.0.0" || echo "127.0.0.1")"
+_TOR_HOSTNAME="${TOR_HOSTNAME:-$(hostname)}"
+HAPROXY_CONFIG="${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}"
 
 
 show_usage () {
@@ -25,9 +25,9 @@ EOF
 
 
 populate_torrc () {
-  local max_circuit_dirtness=${TOR_MAX_CIRCUIT_DIRTNESS:-300}
-  local min_port=${TOR_PORT_BASE:-9060}
-  local amount=${TOR_PORT_AMOUNT:-20}
+  local max_circuit_dirtness="${TOR_MAX_CIRCUIT_DIRTNESS:-300}"
+  local min_port="${TOR_PORT_BASE:-9060}"
+  local amount="${TOR_PORT_AMOUNT:-20}"
 
   cat << EOF
 ## /etc/tor/torrc
@@ -44,8 +44,8 @@ EOF
 
 
 populate_haproxy_cfg () {
-  local min_port=${TOR_PORT_BASE:-9060}
-  local amount=${TOR_PORT_AMOUNT:-20}
+  local min_port="${TOR_PORT_BASE:-9060}"
+  local amount="${TOR_PORT_AMOUNT:-20}"
 
   cat << EOF
 ## /etc/haproxy/haproxy.cfg
@@ -94,8 +94,8 @@ EOF
 
 
 populate_supervisord_config () {
-  local program_name=${1:?Program name REQUIRED}
-  local command_exec=${2:?Command REQUIRED}
+  local program_name="${1:?Program name REQUIRED}"
+  local command_exec="${2:?Command REQUIRED}"
   cat << EOF
 [program:${program_name}]
 command=${command_exec}
