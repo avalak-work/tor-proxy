@@ -1,6 +1,9 @@
-## docker-compose.yml
-## https://docs.docker.com/compose/compose-file/compose-file-v2/
+# docker-compose.yml
+# https://docs.docker.com/compose/compose-file/compose-file-v2/
+# https://docs.docker.com/compose/compose-file/compose-file-v3/
+
 ---
+
 version: "3.3"
 
 services:
