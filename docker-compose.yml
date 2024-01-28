@@ -18,3 +18,4 @@ services:
       TOR_PORT_BASE: 9060
       TOR_PORT_AMOUNT: 20
       TOR_EXPOSE_PORT: 1
+      # TOR_BRIDGE: 

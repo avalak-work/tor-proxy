@@ -1,10 +1,14 @@
 ## Dockerfile
 ## https://docker.github.io/engine/reference/builder/
 
-FROM alpine:3
+FROM debian:bookworm-slim
+
 RUN set -eux; \
-  apk --no-cache add -X http://dl-cdn.alpinelinux.org/alpine/edge/testing gosu \
-  && apk --no-cache add supervisor tor haproxy
+    apt update \
+    && DEBIAN_FRONTEND=noninteractive apt install -yq \
+    supervisor tor haproxy gosu obfs4proxy \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 ADD entrypoint.sh /opt/entrypoint.sh
 RUN set -eux; \

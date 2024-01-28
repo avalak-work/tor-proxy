@@ -28,13 +28,20 @@ populate_torrc () {
   local max_circuit_dirtness="${TOR_MAX_CIRCUIT_DIRTNESS:-300}"
   local min_port="${TOR_PORT_BASE:-9060}"
   local amount="${TOR_PORT_AMOUNT:-20}"
+  local bridge="${TOR_BRIDGE:-}"
 
   cat << EOF
-## /etc/tor/torrc
-## man:torrc
-## Generated at $(date --utc -Iseconds)
+# /etc/tor/torrc
+# man:torrc
+# Generated at $(date --utc -Iseconds)
 
 EOF
+
+  if [ -n "${bridge}" ]; then
+    echo "UseBridges 1"
+    echo "ClientTransportPlugin obfs4 exec /usr/bin/obfs4proxy managed"
+    echo "Bridge ${bridge}"
+  fi
 
   echo "MaxCircuitDirtiness ${max_circuit_dirtness}"
   for port in $(seq "${min_port}" "$(( min_port + amount - 1 ))"); do
@@ -48,9 +55,9 @@ populate_haproxy_cfg () {
   local amount="${TOR_PORT_AMOUNT:-20}"
 
   cat << EOF
-## /etc/haproxy/haproxy.cfg
-## man:haproxy
-## Generated at $(date --utc -Iseconds)
+# /etc/haproxy/haproxy.cfg
+# man:haproxy
+# Generated at $(date --utc -Iseconds)
 
 global
   user haproxy
@@ -106,6 +113,28 @@ stdout_logfile_maxbytes=0
 EOF
 }
 
+if [ ! -f "/etc/supervisord.conf" ]; then
+  cat << EOF > /etc/supervisord.conf
+# /etc/supervisord
+# man:supervisord
+# Generated at $(date --utc -Iseconds)
+
+[unix_http_server]
+file=/run/supervisord.sock
+
+[supervisord]
+logfile=/var/log/supervisord.log
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix:///run/supervisord.sock
+
+[include]
+files = /etc/supervisor.d/*.ini
+EOF
+fi
 
 ## Populate Supervisor services
 mkdir -p /etc/supervisor.d/
@@ -120,7 +149,7 @@ haproxy -f "${HAPROXY_CONFIG}" -c && {
 
 ## Populate & validate TOR config
 populate_torrc > "${TOR_CONFIG}"
-gosu tor /usr/bin/tor -f "${TOR_CONFIG}" --verify-config --hush && {
+/usr/bin/tor -f "${TOR_CONFIG}" --verify-config --hush && {
   echo "[OK] TOR config file valid"
 }
 
